@@ -166,12 +166,28 @@ public:
         throw rocsolver_error(std::string(#name) + std::string(" : "), err); \
     }
 
+#define ROCSOLVER_ERROR_FUNC_SYNC(name, err, handle, ...)                     \
+    err = name(handle, __VA_ARGS__);                                                \
+    if (err != rocblas_status_success) {                                   \
+        throw rocsolver_error(std::string(#name) + std::string(" : "), err); \
+    }                                                                     \
+
 #define ROCSOLVER_ERROR_FUNC_T(name, func, err, ...)                        \
     err = func(__VA_ARGS__);                                               \
     if (err != rocblas_status_success) {                                  \
         throw rocsolver_error(std::string(name) + std::string(" : "), err); \
     }
 
+#define ROCSOLVER_ERROR_FUNC_T_SYNC(name, func, err, handle, ...)                        \
+    err = func(handle, __VA_ARGS__);                                               \
+    if (err != rocblas_status_success) {                                  \
+        throw rocsolver_error(std::string(name) + std::string(" : "), err); \
+    }                                                   \
+    hipStream_t currentStreamId;                                              \
+    ROCSOLVER_ERROR_FUNC(rocsolver_get_stream, err, handle, &currentStreamId);\
+    hipError_t hip_err;                                                       \
+    HIP_ERROR_FUNC(hipStreamSynchronize, hip_err, currentStreamId);
+    
 inline rocblas_eform get_rocsolver_itype(std::int64_t itype) {
     switch (itype) {
         case 1: return rocblas_eform_ax;

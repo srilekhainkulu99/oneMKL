@@ -26,26 +26,15 @@ if(NOT DEFINED HIP_PATH)
 endif() 
 endif()
    set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH}) 
-list(APPEND CMAKE_PREFIX_PATH "${HIP_PATH}/lib/cmake" "${HIP_PATH}/../lib/cmake" "/opt/rocm/rocsolver/lib/cmake/rocsolver")
-
-# find_package(hip QUIET) 
+list(APPEND CMAKE_PREFIX_PATH "${HIP_PATH}/lib/cmake" "${HIP_PATH}/../lib/cmake")
+ 
 find_package(HIP QUIET) 
 find_package(rocsolver REQUIRED)
-
-# find_package(HIP REQUIRED)
-get_filename_component(SYCL_BINARY_DIR ${CMAKE_CXX_COMPILER} DIRECTORY)
-# the OpenCL include file from cuda is opencl 1.1 and it is not compatible with DPC++
-# the OpenCL include headers 1.2 onward is required. This is used to bypass NVIDIA OpenCL headers
-find_path(OPENCL_INCLUDE_DIR CL/cl.h OpenCL/cl.h 
-HINTS 
-${OPENCL_INCLUDE_DIR}
-${SYCL_BINARY_DIR}/../include/sycl/
-)
-# this is work around to avoid duplication half creation in both cuda and SYCL
+  
+# this is work around to avoid duplication half creation in both HIP and SYCL
 add_compile_definitions(HIP_NO_HALF)
 
 find_package(Threads REQUIRED)
-find_package(rocsolver REQUIRED)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(rocSOLVER
@@ -54,14 +43,14 @@ find_package_handle_standard_args(rocSOLVER
     HIP_LIBRARIES
     rocsolver_INCLUDE_DIR
     rocsolver_LIBRARIES
-    OPENCL_INCLUDE_DIR
-)
+    )
+#OPENCL_INCLUDE_DIR
 if(NOT TARGET ONEMKL::rocSOLVER::rocSOLVER)
   add_library(ONEMKL::rocSOLVER::rocSOLVER SHARED IMPORTED)
   set_target_properties(ONEMKL::rocSOLVER::rocSOLVER PROPERTIES
-      IMPORTED_LOCATION "/opt/rocm/rocsolver/lib/librocsolver.so"
-      INTERFACE_INCLUDE_DIRECTORIES "${OPENCL_INCLUDE_DIR};${rocsolver_INCLUDE_DIR};${HIP_INCLUDE_DIRS};"
-      INTERFACE_LINK_LIBRARIES "Threads::Threads;${rocsolver_LIBRARIES};hip::host;"
+      IMPORTED_LOCATION "${HIP_PATH}/../rocsolver/lib/librocsolver.so"
+      INTERFACE_INCLUDE_DIRECTORIES "${rocsolver_INCLUDE_DIR};${HIP_INCLUDE_DIRS};"
+      INTERFACE_LINK_LIBRARIES "Threads::Threads;${rocsolver_LIBRARIES};"
   )
 
 endif()
