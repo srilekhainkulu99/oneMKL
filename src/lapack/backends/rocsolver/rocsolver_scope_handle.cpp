@@ -18,8 +18,7 @@
 *
 **************************************************************************/
 #include "rocsolver_scope_handle.hpp"
-#include <CL/sycl/detail/common.hpp>
-#include <CL/sycl/detail/backend_traits_hip.hpp>
+
 
 namespace oneapi {
 namespace mkl {

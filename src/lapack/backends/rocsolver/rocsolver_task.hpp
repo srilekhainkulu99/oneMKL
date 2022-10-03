@@ -27,7 +27,7 @@
 #include <CL/sycl.hpp>
 #include "oneapi/mkl/types.hpp"
 #include "rocsolver_scope_handle.hpp"
-#include <CL/sycl/detail/pi.hpp>
+
 namespace oneapi {
 namespace mkl {
 namespace lapack {

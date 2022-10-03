@@ -20,9 +20,7 @@
 #ifndef _ROCSOLVER_SCOPED_HANDLE_HPP_
 #define _ROCSOLVER_SCOPED_HANDLE_HPP_
 #include <CL/sycl.hpp>
-// #include <CL/sycl/backend/hip.hpp>
-#include <CL/sycl/context.hpp>
-#include <CL/sycl/detail/pi.hpp>
+
 #include <atomic>
 #include <memory>
 #include <thread>

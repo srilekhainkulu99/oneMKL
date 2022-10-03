@@ -184,7 +184,7 @@ public:
         throw rocsolver_error(std::string(name) + std::string(" : "), err); \
     }                                                   \
     hipStream_t currentStreamId;                                              \
-    ROCSOLVER_ERROR_FUNC(rocsolver_get_stream, err, handle, &currentStreamId);\
+    ROCSOLVER_ERROR_FUNC(rocblas_get_stream, err, handle, &currentStreamId);\
     hipError_t hip_err;                                                       \
     HIP_ERROR_FUNC(hipStreamSynchronize, hip_err, currentStreamId);
     
