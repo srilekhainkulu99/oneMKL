@@ -82,13 +82,13 @@ class rocsolver_error : virtual public std::runtime_error {
 protected:
     inline const char *rocsolver_error_map(rocblas_status error) {
         switch (error) {
-            case  rocblas_status_success: return "ROCBLAS_STATUS_SUCCESS";
+            case rocblas_status_success: return "ROCBLAS_STATUS_SUCCESS";
 
             case rocblas_status_invalid_value: return "ROCBLAS_STATUS_INVALID_VALUE";
 
             case rocblas_status_internal_error: return "ROCBLAS_STATUS_INTERNAL_ERROR";
 
-            default: return "<unknown>";
+	    default: return "<unknown>: " + (int)error;
         }
     }
 
@@ -199,8 +199,8 @@ inline rocblas_eform get_rocsolver_itype(std::int64_t itype) {
 
 inline rocblas_evect get_rocsolver_job(oneapi::mkl::job jobz) {
     switch (jobz) {
-        case oneapi::mkl::job::N: return rocblas_evect_original;
-        case oneapi::mkl::job::V: return rocblas_evect_none;
+        case oneapi::mkl::job::V: return rocblas_evect_original;
+        case oneapi::mkl::job::N: return rocblas_evect_none;
         default: throw "Wrong jobz.";
     }
 }

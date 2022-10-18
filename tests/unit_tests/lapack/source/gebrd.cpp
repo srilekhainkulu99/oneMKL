@@ -62,6 +62,8 @@ bool accuracy(const sycl::device& dev, int64_t m, int64_t n, int64_t lda, uint64
     {
         sycl::queue queue{ dev, async_error_handler };
 
+	std::cout << A.size() << " " << d.size() << " " << e.size() << " " << tauq.size() << " " << taup.size() << std::endl;
+
         auto A_dev = device_alloc<data_T>(queue, A.size());
         auto d_dev = device_alloc<data_T, fp_real>(queue, d.size());
         auto e_dev = device_alloc<data_T, fp_real>(queue, e.size());

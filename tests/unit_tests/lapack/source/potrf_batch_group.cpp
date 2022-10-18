@@ -221,6 +221,7 @@ bool usm_dependency(const sycl::device& dev, uint64_t seed) {
         auto A_dev_iter = A_dev_list.begin();
         for (int64_t global_id = 0; global_id < batch_size; global_id++, A_dev_iter++) {
             A_dev_ptrs[global_id] = A_dev_iter->data();
+	    std::cout << "Group: " << global_id << ": " << A_dev_ptrs[global_id] << std::endl;
         }
 
         A_iter = A_list.begin();

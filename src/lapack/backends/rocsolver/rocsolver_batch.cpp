@@ -523,8 +523,11 @@ inline sycl::event potrf_batch(const char *func_name, Func func, sycl::queue &qu
             int64_t offset = 0;
             rocblas_status err;
             for (int64_t i = 0; i < group_count; i++) {
-                auto **a_ = reinterpret_cast<rocmDataType **>(a_dev);
-                ROCSOLVER_ERROR_FUNC_T_SYNC(func_name, func, err, handle, get_rocblas_fill_mode(uplo[i]),
+                auto **a_ = reinterpret_cast<rocmDataType **>(a);
+                auto **ad_ = reinterpret_cast<rocmDataType **>(a_dev);
+		std::cout << "Group count: " << i << " (" << offset  << "): " << (a_ + offset) << std::endl;
+       		std::cout << "Group count ad: " << i << " (" << offset  << "): " << (ad_ + offset) << std::endl;
+		ROCSOLVER_ERROR_FUNC_T_SYNC(func_name, func, err, handle, get_rocblas_fill_mode(uplo[i]),
                                       (int)n[i], a_ + offset, (int)lda[i], nullptr,
                                       (int)group_sizes[i]);
                 offset += group_sizes[i];
@@ -1013,7 +1016,7 @@ std::int64_t orgqr_batch_scratchpad_size<double>(sycl::queue &queue, std::int64_
     std::int64_t potrf_batch_scratchpad_size<TYPE>(                                          \
         sycl::queue & queue, oneapi::mkl::uplo * uplo, std::int64_t * n, std::int64_t * lda, \
         std::int64_t group_count, std::int64_t * group_sizes) {                              \
-        return 0;                                                                            \
+        return 1;                                                                            \
     }
 
 POTRF_GROUP_LAUNCHER_SCRATCH(float)
@@ -1030,7 +1033,7 @@ POTRF_GROUP_LAUNCHER_SCRATCH(std::complex<double>)
         sycl::queue & queue, oneapi::mkl::uplo * uplo, std::int64_t * n, std::int64_t * nrhs, \
         std::int64_t * lda, std::int64_t * ldb, std::int64_t group_count,                     \
         std::int64_t * group_sizes) {                                                         \
-        return 0;                                                                             \
+        return 1;                                                                             \
     }
 
 POTRS_GROUP_LAUNCHER_SCRATCH(float)
