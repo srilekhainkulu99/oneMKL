@@ -508,6 +508,7 @@ inline sycl::event potrf_batch(const char *func_name, Func func, sycl::queue &qu
         batch_size += group_sizes[i];
     }
 
+    int *info = (int *)malloc_device(sizeof(int) * batch_size, queue);
     T **a_dev = (T **)malloc_device(sizeof(T *) * batch_size, queue);
     auto done_cpy =
         queue.submit([&](sycl::handler &h) { h.memcpy(a_dev, a, batch_size * sizeof(T *)); });
@@ -522,13 +523,13 @@ inline sycl::event potrf_batch(const char *func_name, Func func, sycl::queue &qu
             auto handle = sc.get_handle(queue);
             int64_t offset = 0;
             rocblas_status err;
+
             for (int64_t i = 0; i < group_count; i++) {
                 auto **a_ = reinterpret_cast<rocmDataType **>(a);
                 auto **ad_ = reinterpret_cast<rocmDataType **>(a_dev);
-		std::cout << "Group count: " << i << " (" << offset  << "): " << (a_ + offset) << std::endl;
-       		std::cout << "Group count ad: " << i << " (" << offset  << "): " << (ad_ + offset) << std::endl;
+		auto *info_ = reinterpret_cast<rocblas_int *>(info);
 		ROCSOLVER_ERROR_FUNC_T_SYNC(func_name, func, err, handle, get_rocblas_fill_mode(uplo[i]),
-                                      (int)n[i], a_ + offset, (int)lda[i], nullptr,
+                                      (int)n[i], ad_ + offset, (int)lda[i], (info_ + offset),
                                       (int)group_sizes[i]);
                 offset += group_sizes[i];
             }
